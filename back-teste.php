@@ -54,7 +54,40 @@
 		print_r(json_encode($return_arr));
 	}
 
-	//if(){}
+	if($url == 'listaProdutos'){
+		$sql_prod = 'select * from produto where empresa = '.$_POST['empresa'];
+		$result_prod = ibase_query($conexao, $sql_prod);
+		if($result_prod){
+			while ( $row_prod = ibase_fetch_object($result_prod)) {
+				//var_dump($row_prod);
+				foreach($row_prod as $key => $value){
+					if($key == 'PRODUTO'){ $produto = $value; }
+					if($key == 'DESCRICAO_PRODUTO'){ $desc = $value; }
+					if($key == 'APELIDO_PRODUTO'){ $nick = $value; }
+					if($key == 'GRUPO_PRODUTO'){ $group = $value; }
+					if($key == 'SUBGRUPO_PRODUTO'){ $sgroup = $value; }
+					if($key == 'SITUACAO'){ $sit = $value; }
+					if($key == 'PESO_LIQUIDO'){ $peso = $value; }
+					if($key == 'CLASSIFICACAO_FISCAL'){ $class = $value; }
+					if($key == 'CODIGO_BARRAS'){ $codb = $value;}
+					if($key == 'COLECAO'){ $collection = $value; }
+				}
+				$return_arr[] = array(
+					"produto" => $produto,
+					"descricao" => $desc,
+					"apelido" => $nick,
+					"grupo" => $group,
+					"subgrupo" => $sgroup,
+					"situacao" => $sit,
+					"peso" => $peso,
+					"classificacao" => $class,
+					"codigo_barra" => $codb,
+					"colecao" => $collection
+				);
+			}
+		}
+		print_r(json_encode($return_arr));
+	}
 
 	function is_ajax() {
 	  return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
