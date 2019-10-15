@@ -1,8 +1,11 @@
 <?php
-
+	
+	//conexão do meu computador, na instalação do Firebird a masterkey foi trocada para "teste123" pois desconhecia como usar o firebird
 	$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","teste123") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+	//lê a requisição após do "?" na url do ajax
 	$url = parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY);
 
+	//trazendo as empresas
 	if($url == ''){
 		if(is_ajax()){
 			
@@ -28,6 +31,7 @@
 		}
 	}
 
+	//trocou as empresas então troca-se as cidades
 	if($url == 'trocaEmpresa'){
 		$sql_cidade = "select cidade, descricao_cidade from cidade where empresa = ".$_POST['id'];
 		$resultado_cidade = ibase_query($conexao, $sql_cidade);
@@ -50,7 +54,7 @@
 		print_r(json_encode($return_arr));
 	}
 
-	if()
+	//if(){}
 
 	function is_ajax() {
 	  return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';

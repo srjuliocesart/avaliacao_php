@@ -5,7 +5,7 @@
 	<title></title>
 	<script type="text/javascript">
 		 
-
+		//Início para trazer as empresas cadastradas
 		$(document).ready(function(){
 		    $.ajax({
 		        url: 'back-teste.php',
@@ -25,6 +25,7 @@
 		        }
 		    });
 
+		    //trocam as empresas e trocam-se as cidades disponíveis para a qual foi selecionada
 		    function mudaEmpresa(id){
 		    	$.ajax({
 		        url: 'back-teste.php?trocaEmpresa',
@@ -52,11 +53,16 @@
 			    });
 		    }
 
+		    //"trigger" para quando trocar a empresa
 		    $('.empresas').change(function (){
 		    	$(".cidade").remove(".cidade_op");
 		    	var id = $(this).children(":selected").attr("id");
 		    	mudaEmpresa(id);
 		    });
+
+		    /*$('.lista_prod').click(function(){
+
+		    });*/
 		});
 	</script>
 </head>
