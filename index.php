@@ -43,7 +43,6 @@
 	<br/>
 	<div class="produtos">
 		<table class="produtos_cad table table-striped table-bordered table-sm" id="selectedColumn" >
-			<thead><tr><th><td></td></th></tr></thead>
 		</table>
 	</div>
 
@@ -113,12 +112,12 @@
 			        dataType: 'JSON',
 			        success: function(response){
 		        	if(response.length >= 1){
-		        		 //myRecords = JSON.parse(response);
-		        		 $('.table').dynatable({
+		        		 //testes sendo efetuados com dynatable para filtro feito direto com bootstrap
+		        		 /*$('.table').dynatable({
 		        		 	dataset: {
 								records: response
 							}
-		        		 });
+		        		 });*/
 		        		var head = "<th>Produto</th>" +
 		        		"<th>Descrição</th>" +
 		        		"<th>Apelido</th>" +
