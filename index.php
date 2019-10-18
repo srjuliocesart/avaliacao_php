@@ -1,9 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	
+	<!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="css/style.css" rel="stylesheet">
+  <!-- MDBootstrap Datatables  -->
+  <link href="css/addons/datatables.min.css" rel="stylesheet">
+
+  <style>
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+    bottom: .5em;
+    }
+  </style>
+	
 	<title></title>
-	<script type="text/javascript">
+	
+</head>
+<body>
+	<h1>Empresas</h1>
+	<select class="empresas">
+		<option selected >Escolha a empresa</option>
+	</select>
+	<select class="cidade">
+		<option selected >Cidade</option>
+	</select>
+	<button class="lista_prod">Listar produtos</button>
+	<br/>
+	<div class="produtos">
+		<table class="produtos_cad table table-striped table-bordered table-sm" id="selectedColumn" >
+			<thead><tr><th><td></td></th></tr></thead>
+		</table>
+	</div>
+
+
+	<!-- SCRIPTS -->
+	<!-- JQuery -->
+	<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery.dynatable.js"></script>
+	
+
+    <script type="text/javascript">
 		 
 		//Início para trazer as empresas cadastradas
 		$(document).ready(function(){
@@ -62,6 +113,23 @@
 			        dataType: 'JSON',
 			        success: function(response){
 		        	if(response.length >= 1){
+		        		 //myRecords = JSON.parse(response);
+		        		 $('.table').dynatable({
+		        		 	dataset: {
+								records: response
+							}
+		        		 });
+		        		var head = "<th>Produto</th>" +
+		        		"<th>Descrição</th>" +
+		        		"<th>Apelido</th>" +
+		        		"<th>Grupo</th>" +
+		        		"<th>Subgrupo</th>" +
+		        		"<th>Situação</th>" +
+		        		"<th>Peso</th>" +
+		        		"<th>Classificação</th>" +
+		        		"<th>Código de barras</th>" +
+		        		"<th>Coleção</th>";
+		        		//$("thead tr").append(head);
 	        			var len = response.length;
 			            for(var i=0; i<len; i++){
 			                var produto = response[i].produto;
@@ -102,27 +170,15 @@
 
 		    //lista de produtos
 		    $('.lista_prod').click(function(){
+		    	$(".produtos_cad").empty();
 		    	var empresa = $('.empresas').children(":selected").attr("id");
+		    	var ativouProd = true;
 		    	listaProdutos(empresa);
 		    });
+
 		});
-	</script>
-</head>
-<body>
-	<h1>Empresas</h1>
-	<select class="empresas">
-		<option selected >Escolha a empresa</option>
-	</select>
-	<select class="cidade">
-		<option selected >Cidade</option>
-	</select>
-	<button class="lista_prod">Listar produtos</button>
-	<br/>
-	<div class="produtos">
-		<table class="produtos_cad"></table>
-	</div>
-	<script type="text/javascript">
 		
+		//$('.dataTables_length').addClass('bs-select');
 	</script>
 </body>
 </html>
