@@ -1,7 +1,7 @@
 <?php
 	
 	//conexão do meu computador, na instalação do Firebird a masterkey foi trocada para "teste123" pois desconhecia como usar o firebird
-	$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","teste123") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+	$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
 	//lê a requisição após do "?" na url do ajax
 	$url = parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY);
 
@@ -55,35 +55,26 @@
 	}
 
 	if($url == 'listaProdutos'){
+		$i = 1;
 		$sql_prod = 'select * from produto where empresa = '.$_POST['empresa'];
 		$result_prod = ibase_query($conexao, $sql_prod);
 		if($result_prod){
 			while ( $row_prod = ibase_fetch_object($result_prod)) {
 				//var_dump($row_prod);
+				$return_arr[$i] = array();
 				foreach($row_prod as $key => $value){
-					if($key == 'PRODUTO'){ $produto = $value; }
-					if($key == 'DESCRICAO_PRODUTO'){ $desc = $value; }
-					if($key == 'APELIDO_PRODUTO'){ $nick = $value; }
-					if($key == 'GRUPO_PRODUTO'){ $group = $value; }
-					if($key == 'SUBGRUPO_PRODUTO'){ $sgroup = $value; }
-					if($key == 'SITUACAO'){ $sit = $value; }
-					if($key == 'PESO_LIQUIDO'){ $peso = $value; }
-					if($key == 'CLASSIFICACAO_FISCAL'){ $class = $value; }
-					if($key == 'CODIGO_BARRAS'){ $codb = $value;}
-					if($key == 'COLECAO'){ $collection = $value; }
+					if($key == 'PRODUTO'){ $return_arr[$i]['produto'] = $value; }
+					if($key == 'DESCRICAO_PRODUTO'){ $return_arr[$i]['desc'] = $value; }
+					if($key == 'APELIDO_PRODUTO'){ $return_arr[$i]['nick'] = $value; }
+					if($key == 'GRUPO_PRODUTO'){ $return_arr[$i]['group'] = $value; }
+					if($key == 'SUBGRUPO_PRODUTO'){ $return_arr[$i]['sgroup'] = $value; }
+					if($key == 'SITUACAO'){ $return_arr[$i]['sit'] = $value; }
+					if($key == 'PESO_LIQUIDO'){ $return_arr[$i]['peso'] = $value; }
+					if($key == 'CLASSIFICACAO_FISCAL'){ $return_arr[$i]['class'] = $value; }
+					if($key == 'CODIGO_BARRAS'){ $return_arr[$i]['codb'] = $value;}
+					if($key == 'COLECAO'){ $return_arr[$i]['collection'] = $value; }
 				}
-				$return_arr[] = array(
-					"produto" => $produto,
-					"descricao" => $desc,
-					"apelido" => $nick,
-					"grupo" => $group,
-					"subgrupo" => $sgroup,
-					"situacao" => $sit,
-					"peso" => $peso,
-					"classificacao" => $class,
-					"codigo_barra" => $codb,
-					"colecao" => $collection
-				);
+				$i++;
 			}
 		}
 		print_r(json_encode($return_arr));
