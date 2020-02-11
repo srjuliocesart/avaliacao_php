@@ -47,39 +47,19 @@
 		</table>
 	</div>
 
-
+<!--c. Poder filtrar os produtos por grupo de produto;
+d. Poder filtrar os produtos por tipo complemento do grupo de produtos;
+e. Poder filtrar os produtos por Descrição, apelido e código;-->
 	<!-- SCRIPTS -->
 	<!-- JQuery -->
 	<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
-	<script src="js/addons/dataTables.min.js" type="text/javascript"></script>	
+	<script src="js/addons/dataTables.min.js" type="text/javascript"></script>
+	<script src="js/jquery.sortElements.js"></script>	
 
     <script type="text/javascript">
 		 
 		//Início para trazer as empresas cadastradas
 		$(document).ready(function(){
-			$('#selectedColumn').DataTable({
-				'bSort': true,
-				'columnDefs': [{
-					orderable: true
-				}],
-        'aoColumns': [ 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }, 
-              { sWidth: "20%", bSearchable: false, bSortable: true }
-        ],
-        
-        "scrollCollapse": true,
-        "info":           true,
-        "paging":         true
-			});
-			$('.dataTables_length').addClass('bs-select');
 		    
 		    $.ajax({
 		        url: 'back-teste.php',
@@ -134,7 +114,7 @@
 			    	data: 'empresa='+empresa,
 			        dataType: 'JSON',
 			        success: function(response){
-	        			console.log(response);
+	        			//console.log(response);
 		        	//if(response.length >= 1){
 		        		 //testes sendo efetuados com dynatable para filtro feito direto com bootstrap
 		        		 /*$('.table').dynatable({
@@ -151,9 +131,9 @@
 		        		"<th>Peso</th>" +
 		        		"<th>Classificação</th>" +
 		        		"<th>Código de barras</th>" +
-		        		"<th>Coleção</th></thead><tbody>";
+		        		"<th>Coleção</th></thead>";
 		        		$(".produtos_cad").append(head);
-	        			var len = response.length;
+	        			//var len = response.length;
 			            $.each(response, function(i, val){
 			                var produto = val.produto;
 			                var descricao = val.desc;
@@ -180,10 +160,11 @@
 			                
 			                $(".produtos_cad").append(tr_str);
 			            	});
-			            $(".produtos_cad").append("</tbody>");
+			            //$(".produtos_cad").append("</tbody>");
 		        		}
 		        	//}
 		    	});
+		    	
 		    }
 
 		    //"trigger" para quando trocar a empresa
@@ -200,6 +181,41 @@
 		    	var ativouProd = true;
 		    	listaProdutos(empresa);
 		    });
+
+		    var th = jQuery('th'),
+                li = jQuery('li'),
+                inverse = false;
+            
+            $(document).on("click","th",function(){
+                
+                var header = $(this),
+                    index = header.index();
+                    
+                header
+                    .closest('table')
+                    .find('td')
+                    .filter(function(){
+                        return $(this).index() === index;
+                    })
+                    .sortElements(function(a, b){
+                        
+                        a = $(a).text();
+                        b = $(b).text();
+                        
+                        return (
+                            isNaN(a) || isNaN(b) ?
+                                a > b : +a > +b
+                            ) ?
+                                inverse ? -1 : 1 :
+                                inverse ? 1 : -1;
+                            
+                    }, function(){
+                        return this.parentNode;
+                    });
+                
+                inverse = !inverse;
+                
+            });
 
 		});
 		
