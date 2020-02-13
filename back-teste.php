@@ -1,8 +1,8 @@
 <?php
 	
 	//conexão do meu computador, na instalação do Firebird a masterkey foi trocada para "teste123" pois desconhecia como usar o firebird
-	$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
-	//$conexao = ibase_connect("localhost:C:/xampp/htdocs/avaliacao_php/BD/DB_TESTE2.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+	//$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+	$conexao = ibase_connect("localhost:C:/xampp/htdocs/avaliacao_php/BD/DB_TESTE2.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
 	//lê a requisição após do "?" na url do ajax
 	$url = parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY);
 	$requestData= $_REQUEST;
@@ -69,24 +69,26 @@
 			8 => 'CODIGO_BARRAS',
 			9 => 'COLECAO'
 		);
-		$i = 1;
-		$sql_prod = 'select * from produto p join cidade c on p.empresa = c.empresa where p.empresa = '.$_POST['empresa'].' AND c.cidade = '.$_POST['id']. ' ';
+		$limit = 'FIRST '.$requestData['length'].' SKIP '.$requestData['start']. ' ';
+
+		$sql_prod = 'select '.$limit.'* from produto p join cidade c on p.empresa = c.empresa where p.empresa = '.$_POST['empresa'].' AND c.cidade = '.$_POST['id']. ' ';
+
 		if( !empty($requestData['search']['value']) ) {
-			$sql_prod .= " AND ( PRODUTO LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR DESCRICAO_PRODUTO LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR APELIDO_PRODUTO LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR GRUPO_PRODUTO LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR SUBGRUPO_PRODUTO LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR SITUACAO LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR PESO_LIQUIDO LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR CLASSIFICACAO_FISCAL LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR CODIGO_BARRAS LIKE '".$requestData['search']['value']."%' ";
-			$sql_prod .= " OR COLECAO LIKE '".$requestData['search']['value']."%')";
+			$sql_prod .= " AND ( PRODUTO LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR DESCRICAO_PRODUTO LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR APELIDO_PRODUTO LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR GRUPO_PRODUTO LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR SUBGRUPO_PRODUTO LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR SITUACAO LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR PESO_LIQUIDO LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR CLASSIFICACAO_FISCAL LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR CODIGO_BARRAS LIKE '".strtoupper($requestData['search']['value'])."%' ";
+			$sql_prod .= " OR COLECAO LIKE '".strtoupper($requestData['search']['value'])."%')";
 		}
 		//faz a ordenação
-		$sql_prod.=" ORDER BY ". $colunas[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."  LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
-		
-		$result_prod = ibase_query($conexao, $sql_prod);
+		$sql_prod.=" ORDER BY ". $colunas[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']." ";
+		//echo $sql_prod;
+		$result_prod = ibase_query($conexao, $sql_prod)or die(ibase_errmsg());
 		if($result_prod){
 			$datas = array();
 			while ( $row_prod = ibase_fetch_assoc($result_prod) ){
@@ -105,13 +107,16 @@
 				$datas[] = $data;
 			}
 		}
-		ibase_free_result($result_prod);
 		//echo "<pre>";
 		$sql_qtd = 'select COUNT(*) as qtd from produto where empresa = '.$_POST['empresa'];
 		$result = ibase_query($sql_qtd);
 		$row_qtd = ibase_fetch_assoc($result);
 
-		$sql_qtd_tot = str_replace($sql_prod, 'COUNT(*) as QTDTOT', '*');
+		$limit .= '*';
+		$order = "ORDER BY ". $colunas[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir'] ;
+		$sql_qtd_tot = str_replace($limit, 'COUNT(*) as QTDTOT', $sql_prod);
+		$sql_qtd_tot = str_replace($order, '',$sql_qtd_tot);
+		//echo $sql_qtd_tot;
 		$result_tot = ibase_query($sql_qtd_tot);
 		$row_tot = ibase_fetch_assoc($result_tot);
 
@@ -122,18 +127,8 @@
 			"data" => $datas
 		);
 
-		$sql_details = array(
-		    'user' => 'SYSDBA',
-		    'pass' => 'masterkey',
-		    'db'   => 'DB_TESTE.fdb',
-		    'host' => 'localhost'
-		);
-
-		require( 'ssp.class.php' );
- 
-		echo json_encode(
-		    SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns )
-		);
+		
+		echo json_encode( $dados_json );
 		//echo "</pre>";
 		//exit();
 	}

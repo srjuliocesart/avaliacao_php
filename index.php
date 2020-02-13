@@ -116,6 +116,17 @@ e. Poder filtrar os produtos por Descrição, apelido e código;-->
 		    }
 
 		    function listaProdutos(empresa,id){
+		    	var tr_str = '<th>Produto</th>'+
+		        		'<th>Descrição</th>'+
+		        		'<th>Apelido</th>'+
+		        		'<th>Grupo</th>'+
+		        		'<th>Subgrupo</th>'+
+		        		'<th>Situação</th>'+
+		        		'<th>Peso</th>'+
+		        		'<th>Classificação</th>'+
+		        		'<th>Código de barras</th>'+
+		        		'<th>Coleção</th>';
+		        $('.thead').append(tr_str);
 		    	 $('.produtos_cad').dataTable({
 		    	 	'destroy':true,
 	                'processing': true,
@@ -124,21 +135,21 @@ e. Poder filtrar os produtos por Descrição, apelido e código;-->
 	                'ajax': {
 	                    'url':'back-teste.php?listaProdutos',
 	                    'data': {
-	                    		empresa: 'empresa',
-	                    		id: 'id'
+	                    		empresa: empresa,
+	                    		id: id
 	                			}
 	                },
 	                'columns': [
-	                    { data: 'produto' },
-	                    { data: 'desc' },
-	                    { data: 'nick' },
-						{ data: 'group'},
-						{ data: 'sgroup'},
-						{ data: 'sit'},
-						{ data: 'peso'},
-						{ data: 'class'},
-						{ data: 'codb'},
-						{ data: 'collection'},
+	                    { data: 'produto', title: 'Produto' },
+	                    { data: 'desc', title: 'Descrição' },
+	                    { data: 'nick', title: 'Apelido' },
+						{ data: 'group', title: 'Grupo'},
+						{ data: 'sgroup', title: 'Subgrupo'},
+						{ data: 'sit', title: 'Situação'},
+						{ data: 'peso', title: 'Peso'},
+						{ data: 'class', title: 'Classificação'},
+						{ data: 'codb', title: 'Código de barras'},
+						{ data: 'collection', title: 'Coleção'},
 						{ data: 'buttons'}
 	                ]
 	            });
