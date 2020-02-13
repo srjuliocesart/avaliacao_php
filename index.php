@@ -7,27 +7,11 @@
   <!-- Bootstrap core CSS -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <!-- Material Design Bootstrap -->
-  <link href="css/mdb.min.css" rel="stylesheet">
+  <link href='//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
+  <link href="https://cdn.datatables.net/colreorder/1.5.2/css/colReorder.dataTables.min.css" type='text/css'>
   <!-- Your custom styles (optional) -->
   <link href="css/style.css" rel="stylesheet">
   <!-- MDBootstrap Datatables  -->
-  <link href="css/addons/datatables.min.css" rel="stylesheet">
-
-  <style>
-    table.produtos_cad thead .sorting:after,
-    table.produtos_cad thead .sorting:before,
-    table.produtos_cad thead .sorting_asc:after,
-    table.produtos_cad thead .sorting_asc:before,
-    table.produtos_cad thead .sorting_asc_disabled:after,
-    table.produtos_cad thead .sorting_asc_disabled:before,
-    table.produtos_cad thead .sorting_desc:after,
-    table.produtos_cad thead .sorting_desc:before,
-    table.produtos_cad thead .sorting_desc_disabled:after,
-    table.produtos_cad thead .sorting_desc_disabled:before {
-    bottom: .5em;
-    }
-  </style>
-	
 	<title></title>
 	
 </head>
@@ -39,11 +23,28 @@
 	<select class="cidade">
 		<option selected >Cidade</option>
 	</select>
+	<select class="grupo">
+		<option selected >Grupo de produto</option>
+	</select>
+	<select class="complemento">
+		<option selected >Complemento</option>
+	</select>
+	<select class=""></select>
 	<button class="lista_prod">Listar produtos</button>
 	<button class="adc_prod">Adicionar produtos</button>
 	<br/>
 	<div class="produtos">
 		<table class="produtos_cad table table-striped table-bordered table-sm" id="selectedColumn" >
+			<thead><th>Produto</th>
+		        		<th>Descrição</th>
+		        		<th>Apelido</th>
+		        		<th>Grupo</th>
+		        		<th>Subgrupo</th>
+		        		<th>Situação</th>
+		        		<th>Peso</th>
+		        		<th>Classificação</th>
+		        		<th>Código de barras</th>
+		        		<th>Coleção</th></thead>
 		</table>
 	</div>
 
@@ -52,9 +53,16 @@ d. Poder filtrar os produtos por tipo complemento do grupo de produtos;
 e. Poder filtrar os produtos por Descrição, apelido e código;-->
 	<!-- SCRIPTS -->
 	<!-- JQuery -->
-	<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
-	<script src="js/addons/dataTables.min.js" type="text/javascript"></script>
-	<script src="js/jquery.sortElements.js"></script>	
+	<!-- Datatable CSS -->
+
+
+<!-- jQuery Library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Datatable JS -->
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/colreorder/1.5.2/js/dataTables.colReorder.min.js"></script>
+
 
     <script type="text/javascript">
 		 
@@ -107,63 +115,33 @@ e. Poder filtrar os produtos por Descrição, apelido e código;-->
 			    });
 		    }
 
-		    function listaProdutos(empresa){
-		    	$.ajax({
-			        url: 'back-teste.php?listaProdutos',
-			        type: 'POST',
-			    	data: 'empresa='+empresa,
-			        dataType: 'JSON',
-			        success: function(response){
-	        			//console.log(response);
-		        	//if(response.length >= 1){
-		        		 //testes sendo efetuados com dynatable para filtro feito direto com bootstrap
-		        		 /*$('.table').dynatable({
-		        		 	dataset: {
-								records: response
-							}
-		        		 });*/
-		        		var head = "<thead><th>Produto</th>" +
-		        		"<th>Descrição</th>" +
-		        		"<th>Apelido</th>" +
-		        		"<th>Grupo</th>" +
-		        		"<th>Subgrupo</th>" +
-		        		"<th>Situação</th>" +
-		        		"<th>Peso</th>" +
-		        		"<th>Classificação</th>" +
-		        		"<th>Código de barras</th>" +
-		        		"<th>Coleção</th></thead>";
-		        		$(".produtos_cad").append(head);
-	        			//var len = response.length;
-			            $.each(response, function(i, val){
-			                var produto = val.produto;
-			                var descricao = val.desc;
-			                var apelido = val.nick;
-			                var grupo = val.group;
-			                var subgrupo = val.sgroup;
-			                var situacao = val.sit;
-			                var peso = val.peso;
-			                var classificacao = val.class;
-			                var codigo_barra = val.codb;
-			                var colecao = val.collection;
-
-			                var tr_str = "<tr><td class='produto'> " + produto + "</td>" +
-			                	"<td class='descricao'>" + descricao + "</td>" +
-			                	"<td class='apelido'>" + apelido + "</td>" +
-			                	"<td class='grupo'>" + grupo + "</td>" +
-			                	"<td class='subgrupo'>" + subgrupo + "</td>" +
-			                	"<td class='situacao'>" + situacao + "</td>" +
-			                	"<td class='peso'>" + peso + "</td>" +
-			                	"<td class='classificacao'>" + classificacao + "</td>" +
-			                	"<td class='codigo_barra'>" + codigo_barra + "</td>" +
-			                	"<td class='colecao'>" + colecao + "</td>" +
-			                	"<td class='remover' id="+ i +"><button>REMOVER</button><button>EDITAR</button></td></tr>"
-			                
-			                $(".produtos_cad").append(tr_str);
-			            	});
-			            //$(".produtos_cad").append("</tbody>");
-		        		}
-		        	//}
-		    	});
+		    function listaProdutos(empresa,id){
+		    	 $('.produtos_cad').dataTable({
+		    	 	'destroy':true,
+	                'processing': true,
+	                'serverSide': true,
+	                'serverMethod': 'post',
+	                'ajax': {
+	                    'url':'back-teste.php?listaProdutos',
+	                    'data': {
+	                    		empresa: 'empresa',
+	                    		id: 'id'
+	                			}
+	                },
+	                'columns': [
+	                    { data: 'produto' },
+	                    { data: 'desc' },
+	                    { data: 'nick' },
+						{ data: 'group'},
+						{ data: 'sgroup'},
+						{ data: 'sit'},
+						{ data: 'peso'},
+						{ data: 'class'},
+						{ data: 'codb'},
+						{ data: 'collection'},
+						{ data: 'buttons'}
+	                ]
+	            });
 		    	
 		    }
 
@@ -178,48 +156,13 @@ e. Poder filtrar os produtos por Descrição, apelido e código;-->
 		    $('.lista_prod').click(function(){
 		    	$(".produtos_cad").empty();
 		    	var empresa = $('.empresas').children(":selected").attr("id");
+		    	var id = $('.cidade').children(":selected").attr("id");
 		    	var ativouProd = true;
-		    	listaProdutos(empresa);
+		    	listaProdutos(empresa,id);
 		    });
 
-		    var th = jQuery('th'),
-                li = jQuery('li'),
-                inverse = false;
-            
-            $(document).on("click","th",function(){
-                
-                var header = $(this),
-                    index = header.index();
-                    
-                header
-                    .closest('table')
-                    .find('td')
-                    .filter(function(){
-                        return $(this).index() === index;
-                    })
-                    .sortElements(function(a, b){
-                        
-                        a = $(a).text();
-                        b = $(b).text();
-                        
-                        return (
-                            isNaN(a) || isNaN(b) ?
-                                a > b : +a > +b
-                            ) ?
-                                inverse ? -1 : 1 :
-                                inverse ? 1 : -1;
-                            
-                    }, function(){
-                        return this.parentNode;
-                    });
-                
-                inverse = !inverse;
-                
-            });
-
 		});
-		
-		//$('.dataTables_length').addClass('bs-select');
+
 	</script>
 </body>
 </html>
