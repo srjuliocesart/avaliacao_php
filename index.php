@@ -20,16 +20,24 @@
 	<select class="empresas">
 		<option selected >Escolha a empresa</option>
 	</select>
-	<select class="cidade">
+	<select class="cidade" disabled="true">
 		<option selected >Cidade</option>
 	</select>
-	<select class="grupo">
+	<select class="grupo" disabled="true">
 		<option selected >Grupo de produto</option>
 	</select>
-	<select class="complemento">
+	<select class="complemento" disabled="true">
 		<option selected >Complemento</option>
 	</select>
-	<select class=""></select>
+	<select class="descricao" disabled="true">
+		<option selected >Descrição</option>
+	</select>
+	<select class="apelido" disabled="true">
+		<option selected >Apelido</option>
+	</select>
+	<select class="codigo" disabled="true">
+		<option selected >Código</option>
+	</select>
 	<button class="lista_prod">Listar produtos</button>
 	<button class="adc_prod">Adicionar produtos</button>
 	<br/>
@@ -48,9 +56,8 @@
 		</table>
 	</div>
 
-<!--c. Poder filtrar os produtos por grupo de produto;
-d. Poder filtrar os produtos por tipo complemento do grupo de produtos;
-e. Poder filtrar os produtos por Descrição, apelido e código;-->
+
+<!--e. Poder filtrar os produtos por Descrição, apelido e código;-->
 	<!-- SCRIPTS -->
 	<!-- JQuery -->
 	<!-- Datatable CSS -->
@@ -90,12 +97,18 @@ e. Poder filtrar os produtos por Descrição, apelido e código;-->
 		    //trocam as empresas e trocam-se as cidades disponíveis para a qual foi selecionada
 		    function mudaEmpresa(id){
 		    	$(".cidade").empty();
+		    	$(".grupo").empty();
+		    	$(".complemento").empty();
+		    	$(".descricao").empty();
+		    	$(".apelido").empty();
+		    	$(".codigo").empty();	    	
 		    	$.ajax({
 			        url: 'back-teste.php?trocaEmpresa',
 			        type: 'POST',
 			    	data: 'id='+id,
 			        dataType: 'JSON',
 			        success: function(response){
+	        			$(".cidade").append("<option>=====================</option>");
 			        	if(response.length >= 1){
 				            var len = response.length;
 				            for(var i=0; i<len; i++){
@@ -107,9 +120,157 @@ e. Poder filtrar os produtos por Descrição, apelido e código;-->
 				            	}
 
 				        }
+				        $(".cidade").prop("disabled", false);
+				        //$(".cidade").trigger("change");
 					},
 					error:function (request, status, error) {
-						$(".cidade").empty();
+						$(".cidade").append("<option>=====================</option>");
+	                	alert("Não há uma cidade cadastrada para essa empresa");
+	            	}
+			    });
+		    }
+
+		    function mudaCidade(cidade, empresa){
+		    	$(".grupo").empty();
+		    	$(".complemento").empty();
+		    	$(".descricao").empty();
+		    	$(".apelido").empty();
+		    	$(".codigo").empty();
+		    	$.ajax({
+			        url: 'back-teste.php?trocaCidade',
+			        type: 'POST',
+			    	data: 'idCidade='+cidade+'&idEmpresa='+empresa,
+			        dataType: 'JSON',
+			        success: function(response){
+	        			$(".grupo").append("<option>=====================</option>");
+			        	if(response.length >= 1){
+				            var len = response.length;
+				            for(var i=0; i<len; i++){
+				                var grupo = response[i].grupo;
+				                var tr_str = "<option id='"+grupo+"' class='grupo_op'>" + grupo + "</option>";            
+				                $(".grupo").append(tr_str);
+				            	}
+				        }
+				        $(".grupo").prop("disabled", false);
+				        //$(".grupo").trigger("change");
+					},
+					error:function (request, status, error) {
+						$(".grupo").append("<option>=====================</option>");
+	                	alert("Não há uma cidade cadastrada para essa empresa");
+	            	}
+			    });
+		    }
+
+		    function mudaGrupo(cidade, empresa, grupo){
+		    	$(".complemento").empty();
+		    	$(".descricao").empty();
+		    	$(".apelido").empty();
+		    	$(".codigo").empty();
+		    	$.ajax({
+			        url: 'back-teste.php?trocaGrupo',
+			        type: 'POST',
+			    	data: 'idCidade='+cidade+'&idEmpresa='+empresa+'&idGrupo='+grupo,
+			        dataType: 'JSON',
+			        success: function(response){
+			    		$(".complemento").append("<option>=====================</option>");
+			        	if(response.length >= 1){
+				            var len = response.length;
+				            for(var i=0; i<len; i++){
+				                var sgrupo = response[i].sgrupo;
+				                var tr_str = "<option id='"+sgrupo+"' class='complemento_op'>" + sgrupo + "</option>";
+				                $(".complemento").append(tr_str);
+				            	}
+				        }
+				        $(".complemento").prop("disabled", false);
+				        //$(".complemento").trigger("change");
+					},
+					error:function (request, status, error) {
+						$(".complemento").append("<option>=====================</option>");
+	                	alert("Não há uma cidade cadastrada para essa empresa");
+	            	}
+			    });
+		    }
+
+		    function mudaComplemento(cidade, empresa, grupo, complemento){
+		    	$(".descricao").empty();
+		    	$(".apelido").empty();
+		    	$(".codigo").empty();
+		    	$.ajax({
+			        url: 'back-teste.php?trocaComplemento',
+			        type: 'POST',
+			    	data: 'idCidade='+cidade+'&idEmpresa='+empresa+'&idGrupo='+grupo+'&idComplemento='+complemento,
+			        dataType: 'JSON',
+			        success: function(response){
+			    		$(".descricao").append("<option>=====================</option>");
+			        	if(response.length >= 1){
+				            var len = response.length;
+				            for(var i=0; i<len; i++){
+				                var desc = response[i].desc;
+				                var tr_str = "<option id='"+desc+"' class='descricao_op'>" + desc + "</option>";
+				                $(".descricao").append(tr_str);
+				            	}
+				        }
+				        $(".descricao").prop("disabled", false);
+				        //$(".complemento").trigger("change");
+					},
+					error:function (request, status, error) {
+						$(".descricao").append("<option>=====================</option>");
+	                	alert("Não há uma cidade cadastrada para essa empresa");
+	            	}
+			    });
+		    }
+
+		    function mudaDesc(cidade, empresa, grupo, complemento, descricao){
+		    	$(".apelido").empty();
+		    	$(".codigo").empty();
+		    	$.ajax({
+			        url: 'back-teste.php?trocaDescricao',
+			        type: 'POST',
+			    	data: 'idCidade='+cidade+'&idEmpresa='+empresa+'&idGrupo='+grupo+'&idComplemento='+complemento+'&idDesc='+descricao,
+			        dataType: 'JSON',
+			        success: function(response){
+			    		$(".apelido").append("<option>=====================</option>");
+			        	if(response.length >= 1){
+				            var len = response.length;
+				            for(var i=0; i<len; i++){
+				                var nick = response[i].nick;
+				                var tr_str = "<option id='"+nick+"' class='apelido_op'>" + nick + "</option>";
+				                $(".apelido").append(tr_str);
+				            	}
+				        }
+				        $(".apelido").prop("disabled", false);
+				        //$(".complemento").trigger("change");
+					},
+					error:function (request, status, error) {
+						$(".apelido").append("<option>=====================</option>");
+	                	alert("Não há uma cidade cadastrada para essa empresa");
+	            	}
+			    });
+		    }
+
+
+		    function mudaApelido (cidade, empresa, grupo, complemento, descricao, apelido){
+		    	$(".codigo").empty();
+		    	$.ajax({
+			        url: 'back-teste.php?trocaApelido',
+			        type: 'POST',
+			    	data: 'idCidade='+cidade+'&idEmpresa='+empresa+'&idGrupo='+grupo+'&idComplemento='+complemento+'&idDesc='+descricao+'&idApelido='+apelido,
+			        dataType: 'JSON',
+			        success: function(response){
+			    		$(".codigo").append("<option>=====================</option>");
+			        	if(response.length >= 1){
+				            var len = response.length;
+				            for(var i=0; i<len; i++){
+				                var codigo = response[i].codigo;
+				                var tr_str = "<option id='"+codigo+"' class='codigo_op'>" + codigo + "</option>";
+				                $(".codigo").append(tr_str);
+				            	}
+				        }
+				        $(".codigo").prop("disabled", false);
+				        //$(".complemento").trigger("change");
+					},
+					error:function (request, status, error) {
+						$(".codigo").append("<option>=====================</option>");
 	                	alert("Não há uma cidade cadastrada para essa empresa");
 	            	}
 			    });
@@ -161,6 +322,51 @@ e. Poder filtrar os produtos por Descrição, apelido e código;-->
 		    	$(".cidade").remove(".cidade_op");
 		    	var id = $(this).children(":selected").attr("id");
 		    	mudaEmpresa(id);
+		    });
+
+		    $('.cidade').change(function (){
+		    	$(".grupo").remove(".grupo_op");
+		    	var idCidade = $(this).children(":selected").attr("id");
+		    	var idEmpresa = $('.empresas').children("option:selected").attr("id");
+		    	mudaCidade(idCidade, idEmpresa);
+		    });
+
+		    $('.grupo').change(function (){
+		    	$(".complemento").remove(".complemento_op");
+		    	var idGrupo = $(this).children(":selected").attr("id");
+		    	var idCidade = $('.cidade').children("option:selected").attr("id");
+		    	var idEmpresa = $('.empresas').children("option:selected").attr("id");
+		    	mudaGrupo(idCidade, idEmpresa, idGrupo);
+		    });
+
+		     $('.complemento').change(function (){
+		    	$(".descricao").remove(".desc_op");
+		    	var idComplemento = $(this).children(":selected").attr("id");
+		    	var idGrupo = $('.grupo').children("option:selected").attr("id");
+		    	var idCidade = $('.cidade').children("option:selected").attr("id");
+		    	var idEmpresa = $('.empresas').children("option:selected").attr("id");
+		    	mudaComplemento(idCidade, idEmpresa, idGrupo, idComplemento);
+		    });
+
+		    $('.descricao').change(function (){
+		    	$(".apelido").remove(".nick_op");
+		    	var idDesc = $(this).children(":selected").attr("id");
+		    	var idGrupo = $('.grupo').children("option:selected").attr("id");
+		    	var idCidade = $('.cidade').children("option:selected").attr("id");
+		    	var idEmpresa = $('.empresas').children("option:selected").attr("id");
+		    	var idComplemento = $('.complemento').children("option:selected").attr("id");
+		    	mudaDesc(idCidade, idEmpresa, idGrupo, idComplemento, idDesc);
+		    });
+
+		    $('.apelido').change(function (){
+		    	$(".codigo").remove(".codigo_op");
+		    	var idApelido = $(this).children(":selected").attr("id");
+		    	var idDesc = $('.descricao').children("option:selected").attr("id");
+		    	var idGrupo = $('.grupo').children("option:selected").attr("id");
+		    	var idCidade = $('.cidade').children("option:selected").attr("id");
+		    	var idEmpresa = $('.empresas').children("option:selected").attr("id");
+		    	var idComplemento = $('.complemento').children("option:selected").attr("id");
+		    	mudaApelido(idCidade, idEmpresa, idGrupo, idComplemento, idDesc, idApelido);
 		    });
 
 		    //lista de produtos

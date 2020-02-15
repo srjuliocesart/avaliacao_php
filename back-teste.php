@@ -1,8 +1,8 @@
 <?php
 	
 	//conexão do meu computador, na instalação do Firebird a masterkey foi trocada para "teste123" pois desconhecia como usar o firebird
-	//$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
-	$conexao = ibase_connect("localhost:C:/xampp/htdocs/avaliacao_php/BD/DB_TESTE2.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+	$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+	//$conexao = ibase_connect("localhost:C:/xampp/htdocs/avaliacao_php/BD/DB_TESTE2.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
 	//lê a requisição após do "?" na url do ajax
 	$url = parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY);
 	$requestData= $_REQUEST;
@@ -40,16 +40,99 @@
 		if($resultado_cidade){
 			while ($row_cidade = ibase_fetch_object($resultado_cidade)) {
 				 foreach ($row_cidade as $key => $value) {
-				 	if($key == 'CIDADE'){
-				 		$cidade = $value;
-				 	}
-				 	if($key == 'DESCRICAO_CIDADE'){
-				 		$nome_cidade = $value;
+				 	switch($key){
+				 		case 'CIDADE':
+				 			$cidade = $value;
+				 			break;
+				 		case 'DESCRICAO_CIDADE':
+							$nome_cidade = $value;
+							break;
 				 	}
 				 }
 			        $return_arr[] = array(
 			         	"cidade" => $cidade,
 			         	"nome_cidade" => $nome_cidade
+			        );
+		    }
+		}
+		print_r(json_encode($return_arr));
+	}
+
+	if($url == 'trocaCidade'){
+		$sql_grupo = "select GRUPO_PRODUTO from produto p join cidade c on p.empresa = c.empresa where p.empresa = ".$_POST['idEmpresa']. " AND  c.cidade = ".$_POST['idCidade']." GROUP BY GRUPO_PRODUTO";
+		$resultado_grupo = ibase_query($conexao, $sql_grupo);
+		if($resultado_grupo){
+			while ($row_grupo = ibase_fetch_object($resultado_grupo)) {
+				 foreach ($row_grupo as $key => $value) {
+				 	$grupo = $value;
+				 }
+			        $return_arr[] = array(
+			         	"grupo" => $grupo
+			        );
+		    }
+		}
+		print_r(json_encode($return_arr));
+	}
+
+	if($url == 'trocaGrupo'){
+		$sql_sgrupo = "select SUBGRUPO_PRODUTO from produto p join cidade c on p.empresa = c.empresa where p.empresa = ".$_POST['idEmpresa']. " AND  c.cidade = ".$_POST['idCidade']." AND p.GRUPO_PRODUTO = ".$_POST['idGrupo']." GROUP BY SUBGRUPO_PRODUTO";
+		$resultado_sgrupo = ibase_query($conexao, $sql_sgrupo);
+		if($resultado_sgrupo){
+			while ($row_sgrupo = ibase_fetch_object($resultado_sgrupo)) {
+				 foreach ($row_sgrupo as $key => $value) {
+				 	$sgrupo = $value;
+				 }
+			        $return_arr[] = array(
+			         	"sgrupo" => $sgrupo
+			        );
+		    }
+		}
+		print_r(json_encode($return_arr));
+	}
+
+
+	if($url == 'trocaComplemento'){
+		$sql_desc = "select DESCRICAO_PRODUTO from produto p join cidade c on p.empresa = c.empresa where p.empresa = ".$_POST['idEmpresa']. " AND  c.cidade = ".$_POST['idCidade']." AND p.GRUPO_PRODUTO = ".$_POST['idGrupo']." AND p.SUBGRUPO_PRODUTO = ".$_POST['idComplemento']." GROUP BY DESCRICAO_PRODUTO";
+		$resultado_desc = ibase_query($conexao, $sql_desc);
+		if($resultado_desc){
+			while ($row_desc = ibase_fetch_object($resultado_desc)) {
+				 foreach ($row_desc as $key => $value) {
+				 	$desc = $value;
+				 }
+			        $return_arr[] = array(
+			         	"desc" => $desc
+			        );
+		    }
+		}
+		print_r(json_encode($return_arr));
+	}
+
+	if($url == 'trocaDescricao'){
+		$sql_nick = "select APELIDO_PRODUTO from produto p join cidade c on p.empresa = c.empresa where p.empresa = ".$_POST['idEmpresa']. " AND  c.cidade = ".$_POST['idCidade']." AND p.GRUPO_PRODUTO = ".$_POST['idGrupo']." AND p.SUBGRUPO_PRODUTO = ".$_POST['idComplemento']." AND p.DESCRICAO_PRODUTO like '%".$_POST['idDesc']."%' GROUP BY APELIDO_PRODUTO";
+		$resultado_nick = ibase_query($conexao, $sql_nick);
+		if($resultado_nick){
+			while ($row_nick = ibase_fetch_object($resultado_nick)) {
+				 foreach ($row_nick as $key => $value) {
+				 	$nick = $value;
+				 }
+			        $return_arr[] = array(
+			         	"nick" => $nick
+			        );
+		    }
+		}
+		print_r(json_encode($return_arr));
+	}
+
+	if($url == 'trocaApelido'){
+		$sql_sgrupo = "select APELIDO_PRODUTO from produto p join cidade c on p.empresa = c.empresa where p.empresa = ".$_POST['idEmpresa']. " AND  c.cidade = ".$_POST['idCidade']." AND p.GRUPO_PRODUTO = ".$_POST['idGrupo']." AND p.SUBGRUPO_PRODUTO = ".$_POST['idComplemento']." AND p.DESCRICAO_PRODUTO like '%".$_POST['idDesc']."%' GROUP BY APELIDO_PRODUTO";
+		$resultado_sgrupo = ibase_query($conexao, $sql_sgrupo);
+		if($resultado_sgrupo){
+			while ($row_sgrupo = ibase_fetch_object($resultado_sgrupo)) {
+				 foreach ($row_sgrupo as $key => $value) {
+				 	$sgrupo = $value;
+				 }
+			        $return_arr[] = array(
+			         	"sgrupo" => $sgrupo
 			        );
 		    }
 		}
