@@ -56,13 +56,6 @@
 		</table>
 	</div>
 
-
-<!--e. Poder filtrar os produtos por Descrição, apelido e código;-->
-	<!-- SCRIPTS -->
-	<!-- JQuery -->
-	<!-- Datatable CSS -->
-
-
 <!-- jQuery Library -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
@@ -156,7 +149,7 @@
 					},
 					error:function (request, status, error) {
 						$(".grupo").append("<option>=====================</option>");
-	                	alert("Não há uma cidade cadastrada para essa empresa");
+	                	alert("Nenhum grupo encontrado");
 	            	}
 			    });
 		    }
@@ -186,7 +179,7 @@
 					},
 					error:function (request, status, error) {
 						$(".complemento").append("<option>=====================</option>");
-	                	alert("Não há uma cidade cadastrada para essa empresa");
+	                	alert("Nenhum subgrupo encontrado");
 	            	}
 			    });
 		    }
@@ -215,7 +208,7 @@
 					},
 					error:function (request, status, error) {
 						$(".descricao").append("<option>=====================</option>");
-	                	alert("Não há uma cidade cadastrada para essa empresa");
+	                	alert("Nenhum nome encontrado");
 	            	}
 			    });
 		    }
@@ -243,7 +236,7 @@
 					},
 					error:function (request, status, error) {
 						$(".apelido").append("<option>=====================</option>");
-	                	alert("Não há uma cidade cadastrada para essa empresa");
+	                	alert("Nenhum apelido encontrado");
 	            	}
 			    });
 		    }
@@ -271,12 +264,12 @@
 					},
 					error:function (request, status, error) {
 						$(".codigo").append("<option>=====================</option>");
-	                	alert("Não há uma cidade cadastrada para essa empresa");
+	                	alert("Nenhum código de barras encontrado");
 	            	}
 			    });
 		    }
 
-		    function listaProdutos(empresa,id){
+		    function listaProdutos(empresa,id, grupo=null, complemento=null, descricao=null, apelido=null){
 		    	var tr_str = '<th>Produto</th>'+
 		        		'<th>Descrição</th>'+
 		        		'<th>Apelido</th>'+
@@ -297,7 +290,11 @@
 	                    'url':'back-teste.php?listaProdutos',
 	                    'data': {
 	                    		empresa: empresa,
-	                    		id: id
+	                    		id: id,
+	                    		grupo : grupo,
+	                    		complemento: complemento,
+	                    		descricao: descricao,
+	                    		apelido: apelido
 	                			}
 	                },
 	                'columns': [
@@ -374,8 +371,12 @@
 		    	$(".produtos_cad").empty();
 		    	var empresa = $('.empresas').children(":selected").attr("id");
 		    	var id = $('.cidade').children(":selected").attr("id");
+		    	var nick = $('.apelido').children(":selected").attr("id");
+		    	var desc = $('.descricao').children("option:selected").attr("id");
+		    	var grupo = $('.grupo').children("option:selected").attr("id");    	
+		    	var complemento = $('.complemento').children("option:selected").attr("id");
 		    	var ativouProd = true;
-		    	listaProdutos(empresa,id);
+		    	listaProdutos(empresa,id,grupo,complemento,desc,nick);
 		    });
 
 		});

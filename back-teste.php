@@ -124,15 +124,15 @@
 	}
 
 	if($url == 'trocaApelido'){
-		$sql_sgrupo = "select APELIDO_PRODUTO from produto p join cidade c on p.empresa = c.empresa where p.empresa = ".$_POST['idEmpresa']. " AND  c.cidade = ".$_POST['idCidade']." AND p.GRUPO_PRODUTO = ".$_POST['idGrupo']." AND p.SUBGRUPO_PRODUTO = ".$_POST['idComplemento']." AND p.DESCRICAO_PRODUTO like '%".$_POST['idDesc']."%' GROUP BY APELIDO_PRODUTO";
-		$resultado_sgrupo = ibase_query($conexao, $sql_sgrupo);
+		$sql_cbar = "select CODIGO_BARRAS from produto p join cidade c on p.empresa = c.empresa where p.empresa = ".$_POST['idEmpresa']. " AND  c.cidade = ".$_POST['idCidade']." AND p.GRUPO_PRODUTO = ".$_POST['idGrupo']." AND p.SUBGRUPO_PRODUTO = ".$_POST['idComplemento']." AND p.DESCRICAO_PRODUTO like '%".$_POST['idDesc']."%' AND APELIDO_PRODUTO = ".$_POST['idApelido']." GROUP BY CODIGO_BARRAS";
+		$resultado_cbar = ibase_query($conexao, $sql_cbar);
 		if($resultado_sgrupo){
-			while ($row_sgrupo = ibase_fetch_object($resultado_sgrupo)) {
-				 foreach ($row_sgrupo as $key => $value) {
-				 	$sgrupo = $value;
+			while ($row_cbar = ibase_fetch_object($resultado_cbar)) {
+				 foreach ($row_cbar as $key => $value) {
+				 	$cbar = $value;
 				 }
 			        $return_arr[] = array(
-			         	"sgrupo" => $sgrupo
+			         	"cbar" => $cbar
 			        );
 		    }
 		}
@@ -154,7 +154,10 @@
 		);
 		$limit = 'FIRST '.$requestData['length'].' SKIP '.$requestData['start']. ' ';
 
+		
+
 		$sql_prod = 'select '.$limit.'* from produto p join cidade c on p.empresa = c.empresa where p.empresa = '.$_POST['empresa'].' AND c.cidade = '.$_POST['id']. ' ';
+		
 
 		if( !empty($requestData['search']['value']) ) {
 			$sql_prod .= " AND ( PRODUTO LIKE '".strtoupper($requestData['search']['value'])."%' ";
@@ -168,6 +171,15 @@
 			$sql_prod .= " OR CODIGO_BARRAS LIKE '".strtoupper($requestData['search']['value'])."%' ";
 			$sql_prod .= " OR COLECAO LIKE '".strtoupper($requestData['search']['value'])."%')";
 		}
+
+		if($_POST['grupo'] != null)
+			$sql_prod .= ' AND p.GRUPO_PRODUTO = ' . $_POST['grupo'];
+		if($_POST['complemento'] != null)
+			$sql_prod .= ' AND p.SUBGRUPO_PRODUTO = ' . $_POST['complemento'];
+		if($_POST['descricao'] != null)
+			$sql_prod .= " AND p.DESCRICAO_PRODUTO like '%" . $_POST['descricao'] ."%' ";
+		if($_POST['apelido'] != null)
+			$sql_prod .= ' AND p.APELIDO_PRODUTO = '. $_POST['apelido'];
 		//faz a ordenação
 		$sql_prod.=" ORDER BY ". $colunas[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']." ";
 		//echo $sql_prod;
@@ -180,12 +192,12 @@
 				$data['desc']			=	$row_prod['DESCRICAO_PRODUTO'];
 				$data['nick']			=	$row_prod['APELIDO_PRODUTO'];
 				$data['group']			=	$row_prod['GRUPO_PRODUTO'];
-				$data['sgroup']		=	$row_prod['SUBGRUPO_PRODUTO'];
+				$data['sgroup']			=	$row_prod['SUBGRUPO_PRODUTO'];
 				$data['sit']			=	$row_prod['SITUACAO'];
 				$data['peso']			=	$row_prod['PESO_LIQUIDO'];
 				$data['class']			=	$row_prod['CLASSIFICACAO_FISCAL'];
 				$data['codb']			=	$row_prod['CODIGO_BARRAS'];
-				$data['collection']	=	$row_prod['COLECAO'];
+				$data['collection']		=	$row_prod['COLECAO'];
 				$data['buttons']		=  '<button>Remover</button><button>editar</button>';
 				$datas[] = $data;
 			}
