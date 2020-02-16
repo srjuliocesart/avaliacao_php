@@ -1,6 +1,5 @@
 <?php
 	
-	//conexão do meu computador, na instalação do Firebird a masterkey foi trocada para "teste123" pois desconhecia como usar o firebird
 	$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
 	//$conexao = ibase_connect("localhost:C:/xampp/htdocs/avaliacao_php/BD/DB_TESTE2.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
 	//lê a requisição após do "?" na url do ajax
@@ -140,7 +139,7 @@
 	}
 
 	if($url == 'listaProdutos'){
-		$colunas = array(
+		$columns = array(
 			0 => 'PRODUTO',
 			1 => 'DESCRICAO_PRODUTO',
 			2 => 'APELIDO_PRODUTO',
@@ -152,9 +151,8 @@
 			8 => 'CODIGO_BARRAS',
 			9 => 'COLECAO'
 		);
+		//if($requestData['order'][0]['dir'] == )
 		$limit = 'FIRST '.$requestData['length'].' SKIP '.$requestData['start']. ' ';
-
-		
 
 		$sql_prod = 'select '.$limit.'* from produto p join cidade c on p.empresa = c.empresa where p.empresa = '.$_POST['empresa'].' AND c.cidade = '.$_POST['id']. ' ';
 		
@@ -181,7 +179,7 @@
 		if($_POST['apelido'] != null)
 			$sql_prod .= ' AND p.APELIDO_PRODUTO = '. $_POST['apelido'];
 		//faz a ordenação
-		$sql_prod.=" ORDER BY ". $colunas[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']." ";
+		$sql_prod.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']." ";
 		//echo $sql_prod;
 		$result_prod = ibase_query($conexao, $sql_prod)or die(ibase_errmsg());
 		if($result_prod){
@@ -198,7 +196,7 @@
 				$data['class']			=	$row_prod['CLASSIFICACAO_FISCAL'];
 				$data['codb']			=	$row_prod['CODIGO_BARRAS'];
 				$data['collection']		=	$row_prod['COLECAO'];
-				$data['buttons']		=  '<button>Remover</button><button>editar</button>';
+				$data['buttons']		=  "<button class='removeItem' id=".$row_prod['PRODUTO'].">Remover</button><button class='editaItem' id=".$row_prod['PRODUTO'].">Editar</button>";
 				$datas[] = $data;
 			}
 		}
@@ -208,7 +206,7 @@
 		$row_qtd = ibase_fetch_assoc($result);
 
 		$limit .= '*';
-		$order = "ORDER BY ". $colunas[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir'] ;
+		$order = "ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir'] ;
 		$sql_qtd_tot = str_replace($limit, 'COUNT(*) as QTDTOT', $sql_prod);
 		$sql_qtd_tot = str_replace($order, '',$sql_qtd_tot);
 		//echo $sql_qtd_tot;
