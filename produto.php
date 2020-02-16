@@ -38,8 +38,9 @@ if(isset($_GET['adc_produto'])){
 <input type="text" name="descricao"><br/>
 <label>Apelido</label>
 <input type="text" name="apelido"><br/>
-<label>Grupo</label>
-<input type="text" name="grupo"><br/>
+<select class="grupos">
+  <option selected >Escolha o grupo</option>
+</select>
 <label>Complemento</label>
 <input type="text" name="subgrupo"><br/>
 <label>Situação</label>
@@ -70,12 +71,17 @@ if(isset($_GET['edita_prod'])){
 <form action="produto-back.php?editaItem" method="post" id="form_edit">
 <label>Produto</label>
 <input type="text" name="produto" value="<?=$row_prod['PRODUTO']?>" disabled><br/>
+<select class="empresas">
+  <option selected value="<?=$row_prod['EMPRESA']?>"><?=$row_prod['EMPRESA']?></option>
+</select>
 <label>Descrição</label>
 <input type="text" name="descricao" value="<?=$row_prod['DESCRICAO_PRODUTO']?>"><br/>
 <label>Apelido</label>
 <input type="text" name="apelido" value="<?=$row_prod['APELIDO_PRODUTO']?>"><br/>
 <label>Grupo</label>
-<input type="text" name="grupo" value="<?=$row_prod['GRUPO_PRODUTO']?>"><br/>
+<select class="grupos">
+  <option selected value="<?=$row_prod['GRUPO_PRODUTO']?>"><?=$row_prod['GRUPO_PRODUTO']?></option>
+</select>
 <label>Complemento</label>
 <input type="text" name="subgrupo" value="<?=$row_prod['SUBGRUPO_PRODUTO']?>"><br/>
 <label>Situação</label>

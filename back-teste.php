@@ -32,6 +32,24 @@
 		}
 	}
 
+	if($url == 'produtoPag'){
+		if(is_ajax()){
+			$sql_grupo = "select GRUPO_PRODUTO from produto GROUP BY GRUPO_PRODUTO ";
+			$resultado_grupo = ibase_query($conexao, $sql_grupo);
+			if($resultado_grupo){
+				while ($row_grupo = ibase_fetch_object($resultado_grupo)) {
+					 foreach ($row_grupo as $key => $value) {
+					 	$grupo = $value;
+					 }
+				        $return_arr[] = array(
+				         	"grupo" => $grupo
+				        );
+			    }
+			}
+			print_r(json_encode($return_arr));
+		}
+	}
+
 	//trocou as empresas então troca-se as cidades
 	if($url == 'trocaEmpresa'){
 		$sql_cidade = "select cidade, descricao_cidade from cidade where empresa = ".$_POST['id'];
