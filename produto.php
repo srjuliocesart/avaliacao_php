@@ -1,6 +1,6 @@
 <?php
 
-$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+$conexao = ibase_connect($_SERVER['HTTP_HOST'].":".__DIR__. "/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
 ?>
 <!DOCTYPE html>
 <html>
@@ -106,6 +106,6 @@ if(isset($_GET['edita_prod'])){
 <!-- Datatable JS -->
 <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/colreorder/1.5.2/js/dataTables.colReorder.min.js"></script>
-<script src="http://localhost/Teste/js/produto.js"></script>
+<script src="http://<?php echo $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>/js/produto.js"></script>
 </body>
 </html>

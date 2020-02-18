@@ -1,6 +1,6 @@
 <?php
 
-	$conexao = ibase_connect("localhost:C:/Program Files (x86)/EasyPHP-Devserver-17/eds-www/Teste/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
+	$conexao = ibase_connect($_SERVER['HTTP_HOST'].":".__DIR__. "/BD/DB_TESTE.fdb","SYSDBA","masterkey") or die( 'Erro ao conectar: ' . ibase_errmsg() );
 
 	$url = parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY);
 

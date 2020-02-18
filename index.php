@@ -40,7 +40,7 @@
 		<option selected >Código</option>
 	</select>
 	<button class="lista_prod" >Listar produtos</button>
-	<button class="adc_prod" onclick="window.open('http://localhost/Teste/produto.php?adc_produto','_self')">Adicionar produtos</button>
+	<button class="adc_prod" onclick="window.open('http://<?php echo $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>produto.php?adc_produto','_self')">Adicionar produtos</button>
 	<br/>
 	<div class="produtos">
 		<table class="produtos_cad table table-striped table-bordered table-sm" id="selectedColumn" >
@@ -63,6 +63,6 @@
 <!-- Datatable JS -->
 <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/colreorder/1.5.2/js/dataTables.colReorder.min.js"></script>
-<script src="http://localhost/Teste/js/index.js"></script>
+<script src="http://<?php echo $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>/js/index.js"></script>
 </body>
 </html>
